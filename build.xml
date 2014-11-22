@@ -1,0 +1,65 @@
+<!--
+/*
+ * Copyright 2014 Jeffrey Bosboom.
+ * This file is part of windowlib.
+ *
+ * windowlib is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * windowlib is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with windowlib.  If not, see <http://www.gnu.org/licenses/>.
+ */
+ -->
+
+<project name="windowlib" basedir="." default="jar"
+xmlns:if="ant:if" xmlns:unless="ant:unless"
+>
+	<target name="fetch">
+		<mkdir dir="lib"/>
+		<mkdir dir="lib/doc"/>
+		<mkdir dir="lib/src"/>
+
+		<get src="http://search.maven.org/remotecontent?filepath=com/nativelibs4java/bridj/0.6.2/bridj-0.6.2-c-only.jar"
+			 dest="lib/bridj.jar"
+			 skipexisting="true"/>
+		<get src="http://search.maven.org/remotecontent?filepath=com/nativelibs4java/bridj/0.6.2/bridj-0.6.2-javadoc.jar"
+			 dest="lib/doc/bridj-doc.jar"
+			 skipexisting="true"/>
+		<get src="http://search.maven.org/remotecontent?filepath=com/nativelibs4java/bridj/0.6.2/bridj-0.6.2-sources.jar"
+			 dest="lib/src/bridj-src.jar"
+			 skipexisting="true"/>
+	</target>
+
+	<target name="clean">
+		<delete dir="build"/>
+	</target>
+
+	<target name="build">
+		<mkdir dir="build/classes"/>
+		<javac srcdir="src" destdir="build/classes" debug="true" includeantruntime="false">
+			<classpath>
+				<fileset dir="lib">
+					<include name="*.jar"/>
+				</fileset>
+			</classpath>
+		</javac>
+		<copy todir="build/classes">
+			<fileset dir="src" excludes="**/*.java"/>
+		</copy>
+	</target>
+
+	<target name="jar" depends="build">
+		<mkdir dir="build/jar"/>
+		<jar destfile="build/jar/windowlib.jar" basedir="build/classes">
+		</jar>
+	</target>
+
+	<target name="clean-build" depends="clean,jar"/>
+</project>
